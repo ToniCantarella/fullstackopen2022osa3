@@ -18,6 +18,11 @@ let persons = [
         id: 3,    
         name: "Liisa Leppävirta",
         number: 030364654645
+    },
+    {
+        id: 4,
+        name: "Jesse Jänis",
+        number: 139028
     }
 ]
 
@@ -27,6 +32,7 @@ morgan.token('person', (req) => {
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person'))
 
 app.get('/info', (req, res) => {
@@ -86,9 +92,9 @@ app.post('/api/persons', (req, res) => {
     }
 
     const person = {
+        id: generateId(),
         name: body.name,
         number: body.number,
-        id: generateId()
     }
 
     //console.log(person)
