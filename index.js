@@ -6,18 +6,18 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 /* let persons = [
-    {    
-        id: 1,    
-        name: "Tuomas Taajama",    
+    {
+        id: 1,
+        name: "Tuomas Taajama",
         number: 04345456457
-    },  
-    {    
-        id: 2,    
-        name: "Laura Lampi",    
+    },
+    {
+        id: 2,
+        name: "Laura Lampi",
         number: 01023445645
-    },  
-    {    
-        id: 3,    
+    },
+    {
+        id: 3,
         name: "Liisa Leppävirta",
         number: 030364654645
     },
@@ -46,9 +46,9 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  Person.find({}).then(persons => {
-    res.json(persons)
-  })
+    Person.find({}).then(persons => {
+        res.json(persons)
+    })
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -63,7 +63,7 @@ app.get('/api/persons/:id', (req, res, next) => {
         .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndRemove(req.params.id)
         .then(result => {
             res.status(204).end()
@@ -81,14 +81,14 @@ app.delete('/api/persons/:id', (req, res) => {
 
     return randomId
 } */
-  
+
 app.post('/api/persons', (req, res, next) => {
     const body = req.body
 
     /* const alreadyIncluded = Person.find(person => person.name === body.name) */
 
     if(!body.name || !body.number){
-        console.log("!")
+        console.log('!')
         return res.status(400).json({
             error: 'name or number missing from body'
         })
@@ -107,7 +107,7 @@ app.post('/api/persons', (req, res, next) => {
     })
 
     //console.log(person)
-  
+
     person.save()
         .then(savedPerson => {
             res.json(savedPerson)
@@ -116,16 +116,16 @@ app.post('/api/persons', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-    const {name, number} = req.body
+    const { name, number } = req.body
 
-    const person = {
+    /* const person = {
         name: body.name,
         number: body.number
-    }
+    } */
 
     Person.findByIdAndUpdate(
-        req.params.id, 
-        {name, number}, 
+        req.params.id,
+        { name, number },
         { new: true, runValidators: true, context: 'query' }
     )
         .then(updatedPerson => {
@@ -135,18 +135,18 @@ app.put('/api/persons/:id', (req, res, next) => {
 })
 
 const unknownEndpoint = (req, res) => {
-    res.status(404).send({error: 'unknown endpoint'})
+    res.status(404).send({ error: 'unknown endpoint' })
 }
-  
+
 app.use(unknownEndpoint)
 
 const errorHandler = (error, req, res, next) => {
     console.log(error.message)
 
     if(error.name === 'CastError'){
-        return res.status(400).send({error: 'malformatted id'})
+        return res.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError'){
-        return res.status(400).json({error: error.message})
+        return res.status(400).json({ error: error.message })
     }
 
     next(error)
@@ -156,5 +156,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`)
 })
